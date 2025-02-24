@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Výpočet drsnosti a tolerancie:</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label, select, input { margin: 5px 0; display: block; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid black; padding: 5px; text-align: center; }
+    </style>
+</head>
+<body>
+    <h2>Výpočet drsnosti a tolerancie</h2>
+    <label for="rozmer">Zadajte rozmer (mm):</label>
+    <input type="number" id="rozmer" min="1" max="500">
+
+    <label for="technologia">Vyberte technológiu:</label>
+    <select id="technologia">
+        <option value="sustruzenie">Sústruženie</option>
+        <option value="brusenie">Brúsenie</option>
+        <option value="vrtanie">Vŕtanie</option>
+        <option value="freza">Frézovanie</option>
+    </select>
+
+    <label for="iso_tolerancia">Vyberte ISO 2768 toleranciu:</label>
+    <select id="iso_tolerancia">
+        <option value="f">Jemná (f)</option>
+        <option value="m">Stredná (m)</option>
+        <option value="c">Hrubá (c)</option>
+        <option value="v">Veľmi hrubá (v)</option>
+    </select>
+
+    <button onclick="vypocitaj()">Vypočítať</button>
+
+    <h3>Výsledky:</h3>
+    <table>
+        <tr>
+            <th>ISO 2768 Tolerancia</th>
+            <th>Tolerancia IT</th>
+            <th>Drsnosť Ra (µm)</th>
+            <th>ISO 2768 Hodnota (mm)</th>
+        </tr>
+        <tr>
+            <td id="iso"></td>
+            <td id="it"></td>
+            <td id="ra"></td>
+            <td id="iso_hodnota"></td>
+        </tr>
+    </table>
+
+    <script>
+        function vypocitaj() {
+            let rozmer = parseFloat(document.getElementById("rozmer").value);
+            let technologia = document.getElementById("technologia").value;
+            let iso_tolerancia = document.getElementById("iso_tolerancia").value;
+            let it = "-";
+            let ra = "-";
+            let iso = iso_tolerancia;
+            let iso_hodnota = "-";
+
+            const data = {
+                "sustruzenie": {
+                    "f": { max: 10, it: "IT6", ra: "0.8", iso_hodnota: "±0.05" },
+                    "m": { max: 50, it: "IT7", ra: "1.6", iso_hodnota: "±0.1" },
+                    "c": { max: 500, it: "IT9", ra: "3.2", iso_hodnota: "±0.2" },
+                    "v": { max: 500, it: "IT10", ra: "6.3", iso_hodnota: "±0.5" }
+                },
+                "brusenie": {
+                    "f": { max: 10, it: "IT5", ra: "0.4", iso_hodnota: "±0.05" },
+                    "m": { max: 50, it: "IT6", ra: "0.8", iso_hodnota: "±0.1" },
+                    "c": { max: 500, it: "IT8", ra: "1.6", iso_hodnota: "±0.2" },
+                    "v": { max: 500, it: "IT9", ra: "3.2", iso_hodnota: "±0.5" }
+                },
+                "vrtanie": {
+                    "f": { max: 10, it: "IT10", ra: "3.2", iso_hodnota: "±0.1" },
+                    "m": { max: 50, it: "IT11", ra: "6.3", iso_hodnota: "±0.2" },
+                    "c": { max: 500, it: "IT12", ra: "12.5", iso_hodnota: "±0.5" },
+                    "v": { max: 500, it: "IT13", ra: "25", iso_hodnota: "±1.0" }
+                },
+                "freza": {
+                    "f": { max: 10, it: "IT7", ra: "1.6", iso_hodnota: "±0.1" },
+                    "m": { max: 50, it: "IT8", ra: "3.2", iso_hodnota: "±0.2" },
+                    "c": { max: 500, it: "IT10", ra: "6.3", iso_hodnota: "±0.5" },
+                    "v": { max: 500, it: "IT11", ra: "12.5", iso_hodnota: "±1.0" }
+                }
+            };
+            
+            if (data[technologia] && data[technologia][iso_tolerancia]) {
+                let entry = data[technologia][iso_tolerancia];
+                if (rozmer <= entry.max) {
+                    it = entry.it;
+                    ra = entry.ra;
+                    iso_hodnota = entry.iso_hodnota;
+                }
+            }
+            
+            document.getElementById("iso").innerText = iso;
+            document.getElementById("it").innerText = it;
+            document.getElementById("ra").innerText = ra;
+            document.getElementById("iso_hodnota").innerText = iso_hodnota;
+        }
+    </script>
+</body>
+</html>
+
+
+
